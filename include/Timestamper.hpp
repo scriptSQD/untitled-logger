@@ -3,6 +3,7 @@
 #include <ctime>
 #include <iomanip>
 #include <string>
+#include <sstream>
 
 class Timestamper {
   public:
