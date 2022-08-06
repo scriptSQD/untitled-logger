@@ -92,8 +92,6 @@ class Logger {
     inline static bool NoStdout = false;
     inline static bool LoggerEnabled = false;
 
-    static const std::string COLOR_RED;
-    static const std::string COLOR_YELLOW;
     static const std::string COLOR_GRAY;
     static const std::string COLOR_ESCAPE;
 

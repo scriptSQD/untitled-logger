@@ -1,4 +1,4 @@
-#include "../include/Logger.hpp"
+#include <Logger.hpp>
 
 const std::string Logger::COLOR_GRAY = "\033[37m";
 const std::string Logger::COLOR_ESCAPE = "\033[0m";
