@@ -1,6 +1,6 @@
 #pragma once
 
-#include <ctime>
+#include <time.h>
 #include <iomanip>
 #include <string>
 #include <sstream>

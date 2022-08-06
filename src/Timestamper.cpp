@@ -1,13 +1,14 @@
-#include "../include/Timestamper.hpp"
+#include <Timestamper.hpp>
 
 std::string Timestamper::GetCurrent() {
-    const auto time = std::time(nullptr);
-    const auto local = std::localtime(&time);
+    time_t time = std::time(nullptr);
+    struct tm local;
+    localtime_s(&local, &time);
 
     std::stringstream ss;
     std::string timestamp;
 
-    ss << std::put_time(local, "%Y/%m/%d, %H:%M:%S");
+    ss << std::put_time(&local, "%Y/%m/%d, %H:%M:%S");
     timestamp = "[" + ss.str() + "]";
     ss.str(std::string());
 
