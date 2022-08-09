@@ -5,16 +5,19 @@
 #include <fstream>
 #include <iomanip>
 #include <iostream>
+#include <memory>
 #include <string>
 
 #include "Timestamper.hpp"
+
+namespace SQD {
 
 namespace fs = std::filesystem;
 
 class Logger {
   public:
     Logger();
-    explicit Logger(fs::path &debugFilePath);
+    explicit Logger(const fs::path &debugFilePath);
     ~Logger();
 
     /**
@@ -22,7 +25,6 @@ class Logger {
      * @param path Opens std::ofstream at the given path for write.
      */
     static void InitDebugToFile(const fs::path &path);
-
 
     // Syntactic sugar
     /**
@@ -92,10 +94,12 @@ class Logger {
     inline static bool NoStdout = false;
     inline static bool LoggerEnabled = false;
 
-    static const std::string COLOR_GRAY;
-    static const std::string COLOR_ESCAPE;
+    inline static const std::string COLOR_GRAY = "\033[37m";
+    inline static const std::string COLOR_ESCAPE = "\033[0m";
 
     static const auto OpenMode =
         std::ios::out | std::ios::binary | std::ios::app;
-    inline static std::ofstream debugFile{};
+    inline static std::unique_ptr<std::ofstream> debugFile =
+        std::make_unique<std::ofstream>();
 };
+} // namespace SQD
