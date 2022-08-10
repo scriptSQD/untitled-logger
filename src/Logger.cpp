@@ -48,10 +48,12 @@ void SQD::Logger::Handle(const std::string &message,
     throw error;
 }
 
-void SQD::Logger::Log(const std::string &message, const std::string &prefix) {
+void SQD::Logger::Log(const std::string &message, const LogLevel &level) {
     if (!Logger::LoggerEnabled) {
         return;
     }
+
+    const std::string &prefix = Logger::LogLevelPrefixes.at(level);
 
     if (Logger::ToFile) {
         Logger::LogToFile(message, prefix);
@@ -62,8 +64,8 @@ void SQD::Logger::Log(const std::string &message, const std::string &prefix) {
 
 void SQD::Logger::LogToStdout(const std::string &message,
                               const std::string &prefix) {
-    std::cout << COLOR_GRAY << Timestamper::GetCurrent() << " [" << prefix
-              << "]: " << message << COLOR_ESCAPE << std::endl;
+    std::cout << LogLevelColors.at(prefix) << Timestamper::GetCurrent() << " ["
+              << prefix << "]: " << message << COLOR_ESCAPE << std::endl;
 }
 
 void SQD::Logger::LogToFile(const std::string &message,
@@ -72,10 +74,10 @@ void SQD::Logger::LogToFile(const std::string &message,
         (*Logger::debugFile) << Timestamper::GetCurrent() << " [" << prefix
                              << "]: " << message << std::endl;
     } catch (std::ofstream::failure &error) {
-        Logger::Handle(static_cast<std::string>(
-                           "Failed to write to debug file.\nError output: ")
-                           .append(error.what()),
-                       error);
+        Logger::Handle(
+            std::string("Failed to write to debug file.\nError output: ")
+                .append(error.what()),
+            error);
     }
 
     if (!Logger::NoStdout) {

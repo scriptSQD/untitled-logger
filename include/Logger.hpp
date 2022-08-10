@@ -5,6 +5,7 @@
 #include <fstream>
 #include <iomanip>
 #include <iostream>
+#include <map>
 #include <memory>
 #include <string>
 
@@ -13,6 +14,14 @@
 namespace SQD {
 
 namespace fs = std::filesystem;
+
+/**
+ * Specify the level of log entry.
+ * LOG - is a regular debug statement, not indicating any problems.
+ * WARNING - something went not as planned, but didn't cause serious mess.
+ * ERROR - when program has to terminate because of some problem.
+ */
+enum LogLevel { LEVEL_LOG = 1, LEVEL_WARNING = 2, LEVEL_ERROR = 3 };
 
 class Logger {
   public:
@@ -78,7 +87,7 @@ class Logger {
      * WARNING, ERROR, etc.)
      */
     static void Log(const std::string &message,
-                    const std::string &prefix = "LOG");
+                    const LogLevel &level = LEVEL_LOG);
 
     static void LogToStdout(const std::string &message,
                             const std::string &prefix = "LOG");
@@ -94,8 +103,12 @@ class Logger {
     inline static bool NoStdout = false;
     inline static bool LoggerEnabled = false;
 
-    inline static const std::string COLOR_GRAY = "\033[37m";
     inline static const std::string COLOR_ESCAPE = "\033[0m";
+
+    inline static const std::map<LogLevel, std::string> LogLevelPrefixes = {
+        {LEVEL_LOG, "LOG"}, {LEVEL_WARNING, "WARNING"}, {LEVEL_ERROR, "ERROR"}};
+    inline static const std::map<std::string, std::string> LogLevelColors = {
+        {"LOG", "\033[37m"}, {"WARNING", "\033[33m"}, {"ERROR", "\033[31m"}};
 
     static const auto OpenMode =
         std::ios::out | std::ios::binary | std::ios::app;
