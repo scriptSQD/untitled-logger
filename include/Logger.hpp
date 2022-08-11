@@ -15,16 +15,17 @@ namespace SQD {
 
 namespace fs = std::filesystem;
 
-/**
- * Specify the level of log entry.
- * LOG - is a regular debug statement, not indicating any problems.
- * WARNING - something went not as planned, but didn't cause serious mess.
- * ERROR - when program has to terminate because of some problem.
- */
-enum LogLevel { LEVEL_LOG = 1, LEVEL_WARNING = 2, LEVEL_ERROR = 3 };
 
 class Logger {
   public:
+    /**
+     * Specify the level of log entry.
+     * LOG - is a regular debug statement, not indicating any problems.
+     * WARNING - something went not as planned, but didn't cause serious mess.
+     * ERROR - when program has to terminate because of some problem.
+     */
+    enum LogLevel { LEVEL_LOG = 1, LEVEL_WARNING = 2, LEVEL_ERROR = 3 };
+
     Logger();
     explicit Logger(const fs::path &debugFilePath);
     ~Logger();
