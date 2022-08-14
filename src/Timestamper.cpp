@@ -7,7 +7,7 @@ std::string Timestamper::GetCurrent() {
     std::stringstream ss;
     std::string timestamp;
 
-    ss << std::put_time(local, "%Y/%m/%d, %H:%M:%S");
+    ss << std::put_time(local, "%F, %T");
     timestamp = "[" + ss.str() + "]";
 
     return timestamp;

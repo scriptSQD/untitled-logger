@@ -5,16 +5,29 @@
 #include <fstream>
 #include <iomanip>
 #include <iostream>
-#include <map>
 #include <memory>
 #include <string>
+#include <unordered_map>
 
 #include "Timestamper.hpp"
 
 namespace SQD {
 
-namespace fs = std::filesystem;
+/**
+ * It is preferred to use macros instead of direct invocation if you want to
+ * strip logging completely in, e.g., Release builds.
+ */
+#ifndef SQD_DISABLE_LOGGER
+#define SQD_LOG(msg) SQD::Logger::Log(msg)
+#define SQD_WARN(msg) SQD::Logger::Log(msg, SQD::Logger::LEVEL_WARNING)
+#define SQD_ERR(msg) SQD::Logger::Log(msg, SQD::Logger::LEVEL_ERROR)
+#elif SQD_DISABLE_LOGGER == 1
+#define SQD_LOG(msg)
+#define SQD_WARN(msg)
+#define SQD_ERR(msg)
+#endif
 
+namespace fs = std::filesystem;
 
 class Logger {
   public:
@@ -81,35 +94,38 @@ class Logger {
 
     /**
      * Log method uses class' internal state
-     * to log either to file, to stdout or both.
+     * to log either to file, to stdout, both or nowhere.
      *
      * @param message Gets printed to the logging destination.
-     * @param prefix Is optional, this is appended as logging level (like LOG,
-     * WARNING, ERROR, etc.)
+     * @param prefix Is optional, this is appended as logging level prefix (like
+     * LOG, WARNING, ERROR, etc.)
      */
-    static void Log(const std::string &message,
+    static void Log(std::string_view message,
                     const LogLevel &level = LEVEL_LOG);
 
-    static void LogToStdout(const std::string &message,
-                            const std::string &prefix = "LOG");
-
   private:
-    static void Handle(const std::string &message,
+    static void Handle(std::string_view message,
                        std::ofstream::failure &error);
 
-    static void LogToFile(const std::string &message,
-                          const std::string &prefix = "LOG");
+    static void LogToFile(std::string_view message,
+                          const LogLevel &level = LEVEL_LOG);
+    static void LogToStdout(std::string_view message,
+                            const LogLevel &level = LEVEL_LOG);
 
     inline static bool ToFile = false;
     inline static bool NoStdout = false;
     inline static bool LoggerEnabled = false;
 
-    inline static const std::string COLOR_ESCAPE = "\033[0m";
+    inline static constexpr std::string_view COLOR_ESCAPE = "\033[0m";
 
-    inline static const std::map<LogLevel, std::string> LogLevelPrefixes = {
-        {LEVEL_LOG, "LOG"}, {LEVEL_WARNING, "WARNING"}, {LEVEL_ERROR, "ERROR"}};
-    inline static const std::map<std::string, std::string> LogLevelColors = {
-        {"LOG", "\033[37m"}, {"WARNING", "\033[33m"}, {"ERROR", "\033[31m"}};
+    inline static const std::unordered_map<LogLevel, std::string_view>
+        LogLevelPrefixes = {{LEVEL_LOG, "LOG"},
+                            {LEVEL_WARNING, "WARNING"},
+                            {LEVEL_ERROR, "ERROR"}};
+    inline static const std::unordered_map<LogLevel, std::string_view>
+        LogLevelColors = {{LEVEL_LOG, "\033[37m"},
+                          {LEVEL_WARNING, "\033[33m"},
+                          {LEVEL_ERROR, "\033[31m"}};
 
     static const auto OpenMode =
         std::ios::out | std::ios::binary | std::ios::app;
