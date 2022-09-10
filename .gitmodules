@@ -1,0 +1,4 @@
+[submodule "3rd-party/fmt"]
+	path = 3rd-party/fmt
+	url = https://github.com/fmtlib/fmt
+	branch = master
